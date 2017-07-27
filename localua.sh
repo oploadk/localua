@@ -1,19 +1,20 @@
 #!/bin/bash
 
-# Downloads and installs a self-contained Lua and LuaRocks on Linux.
-# Copyright (c) 2015-2016 Pierre Chapuis, MIT Licensed.
+# Downloads and installs a self-contained Lua and LuaRocks on Linux and macOS.
+# Copyright (c) 2015-2017 Pierre Chapuis, MIT Licensed.
 # Original at: https://github.com/catwell/localua
 
-DEFAULT_LUA_V="5.3.2"
-DEFAULT_LR_V="2.3.0"
+DEFAULT_LUA_V="5.3.4"
+DEFAULT_LR_V="2.4.2"
 
 usage () {
-    >&1 echo -e "USAGE: $0 output-dir [5.1.5 | 5.2.3 | 5.3.1] [2.3.0]\n"
-    >&1 echo -n "The first optional argument is the Lua version, "
-    >&1 echo -n "the second one is the LuaRocks version. "
-    >&1 echo -e "Defaults are Lua $DEFAULT_LUA_V and LuaRocks $DEFAULT_LR_V.\n"
-    >&1 echo -n "You can set a custom build directory with environment "
-    >&1 echo -e "variable LOCALUA_BUILD_DIRECTORY (not useful in general)."
+    >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
+    >&2 echo -n "The first optional argument is the Lua version, "
+    >&2 echo -n "the second one is the LuaRocks version. "
+    >&2 echo -e "Defaults are Lua $DEFAULT_LUA_V and LuaRocks $DEFAULT_LR_V.\n"
+    >&2 echo -n "You can set a custom build directory with environment "
+    >&2 echo -e "variable LOCALUA_BUILD_DIRECTORY (not useful in general).\n"
+    >&2 echo -e "You can set a custom makefile target with LOCALUA_TARGET."
     exit 1
 }
 
@@ -44,12 +45,17 @@ mkdir -p "$ODIR"
 
 # Download, unpack and build Lua and LuaRocks
 
+if [ -z "$LOCALUA_TARGET" ]; then
+    LOCALUA_TARGET="posix"
+    [ "$(uname)" = "Linux" ] && LOCALUA_TARGET="linux"
+fi
+
 pushd "$BDIR"
     wget "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz"
     tar xf "lua-${LUA_V}.tar.gz"
     pushd "lua-${LUA_V}"
         sed -i 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h"
-        make linux
+        make "$LOCALUA_TARGET"
         make INSTALL_TOP="$ODIR" install
     popd
     wget "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz"
