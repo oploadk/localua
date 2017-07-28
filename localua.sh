@@ -48,6 +48,7 @@ mkdir -p "$ODIR"
 if [ -z "$LOCALUA_TARGET" ]; then
     LOCALUA_TARGET="posix"
     [ "$(uname)" = "Linux" ] && LOCALUA_TARGET="linux"
+    [ "$(uname)" = "Darwin" ] && LOCALUA_TARGET="macosx"
 fi
 
 pushd "$BDIR"
