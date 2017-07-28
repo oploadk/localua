@@ -54,7 +54,8 @@ pushd "$BDIR"
     wget "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz"
     tar xf "lua-${LUA_V}.tar.gz"
     pushd "lua-${LUA_V}"
-        sed -i 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h"
+        sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
+        mv "$BDIR/t" "src/luaconf.h"
         make "$LOCALUA_TARGET"
         make INSTALL_TOP="$ODIR" install
     popd
