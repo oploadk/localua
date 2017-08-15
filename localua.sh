@@ -14,7 +14,9 @@ usage () {
     >&2 echo -e "Defaults are Lua $DEFAULT_LUA_V and LuaRocks $DEFAULT_LR_V.\n"
     >&2 echo -n "You can set a custom build directory with environment "
     >&2 echo -e "variable LOCALUA_BUILD_DIRECTORY (not useful in general).\n"
-    >&2 echo -e "You can set a custom makefile target with LOCALUA_TARGET."
+    >&2 echo -e "You can set a custom makefile target with LOCALUA_TARGET.\n"
+    >&2 echo -e "You can disable LUA_COMPAT by setting LOCALUA_NO_COMPAT.\n"
+    >&2 echo -e "You can skip luarocks by setting LOCALUA_NO_LUAROCKS."
     exit 1
 }
 
@@ -57,17 +59,23 @@ pushd "$BDIR"
     pushd "lua-${LUA_V}"
         sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
         mv "$BDIR/t" "src/luaconf.h"
+        if [ ! -z "$LOCALUA_NO_COMPAT" ]; then
+            sed 's#-DLUA_COMPAT_5_2##' "src/Makefile" > "$BDIR/t"
+            sed 's#-DLUA_COMPAT_ALL##' "$BDIR/t" > "src/Makefile"
+        fi
         make "$LOCALUA_TARGET"
         make INSTALL_TOP="$ODIR" install
     popd
-    wget "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz"
-    tar xf "luarocks-${LR_V}.tar.gz"
-    pushd "luarocks-${LR_V}"
-        ./configure --with-lua="$ODIR" --prefix="$ODIR" \
-                    --lua-version="$LUA_SHORTV" \
-                    --sysconfdir="$ODIR/luarocks" --force-config
-        make bootstrap
-    popd
+    if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
+        wget "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz"
+        tar xf "luarocks-${LR_V}.tar.gz"
+        pushd "luarocks-${LR_V}"
+            ./configure --with-lua="$ODIR" --prefix="$ODIR" \
+                        --lua-version="$LUA_SHORTV" \
+                        --sysconfdir="$ODIR/luarocks" --force-config
+            make bootstrap
+        popd
+    fi
 popd
 
 # Cleanup
