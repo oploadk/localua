@@ -5,7 +5,7 @@
 # Original at: https://github.com/catwell/localua
 
 DEFAULT_LUA_V="5.3.4"
-DEFAULT_LR_V="2.4.2"
+DEFAULT_LR_V="2.4.4"
 
 usage () {
     >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
