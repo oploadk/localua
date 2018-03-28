@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Downloads and installs a self-contained Lua and LuaRocks on Linux and macOS.
-# Copyright (c) 2015-2017 Pierre Chapuis, MIT Licensed.
-# Original at: https://github.com/catwell/localua
+# Copyright (c) 2015-2018 Pierre Chapuis, MIT Licensed.
+# Original at: https://github.com/oploadk/localua
 
 DEFAULT_LUA_V="5.3.4"
 DEFAULT_LR_V="2.4.4"
