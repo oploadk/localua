@@ -4,7 +4,7 @@
 # Copyright (c) 2015-2018 Pierre Chapuis, MIT Licensed.
 # Original at: https://github.com/oploadk/localua
 
-DEFAULT_LUA_V="5.3.4"
+DEFAULT_LUA_V="5.3.5"
 DEFAULT_LR_V="2.4.4"
 
 usage () {
