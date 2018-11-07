@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Downloads and installs a self-contained Lua and LuaRocks on Linux and macOS.
+# Downloads and installs a self-contained Lua and LuaRocks.
+# Supports Linux, macOS and MSYS2.
 # Copyright (c) 2015-2018 Pierre Chapuis, MIT Licensed.
 # Original at: https://github.com/oploadk/localua
 
@@ -48,9 +49,16 @@ mkdir -p "$ODIR"
 # Download, unpack and build Lua and LuaRocks
 
 if [ -z "$LOCALUA_TARGET" ]; then
-    LOCALUA_TARGET="posix"
-    [ "$(uname)" = "Linux" ] && LOCALUA_TARGET="linux"
-    [ "$(uname)" = "Darwin" ] && LOCALUA_TARGET="macosx"
+    case "$(uname)" in
+        Linux)
+            LOCALUA_TARGET="linux";;
+        Darwin)
+            LOCALUA_TARGET="macosx";;
+        MSYS*)
+            LOCALUA_TARGET="msys";;
+        *)
+            LOCALUA_TARGET="posix";;
+    esac
 fi
 
 pushd "$BDIR"
@@ -63,8 +71,29 @@ pushd "$BDIR"
             sed 's#-DLUA_COMPAT_5_2##' "src/Makefile" > "$BDIR/t"
             sed 's#-DLUA_COMPAT_ALL##' "$BDIR/t" > "src/Makefile"
         fi
-        make "$LOCALUA_TARGET"
-        make INSTALL_TOP="$ODIR" install
+
+        if [ "$LOCALUA_TARGET" = "msys" ]; then
+            >> "src/Makefile" echo
+            >> "src/Makefile" echo 'msys:' >> "src/Makefile"
+            >> "src/Makefile" echo -ne "\t"
+            >> "src/Makefile" echo '$(MAKE) "LUA_A=lua53.dll" "LUA_T=lua.exe" \'
+            >> "src/Makefile" echo -ne "\t"
+            >> "src/Makefile" echo '"AR=$(CC) -shared -Wl,--out-implib,liblua.dll.a -o" "RANLIB=strip --strip-unneeded" \'
+            >> "src/Makefile" echo -ne "\t"
+            >> "src/Makefile" echo '"SYSCFLAGS=-DLUA_BUILD_AS_DLL -DLUA_USE_POSIX -DLUA_USE_DLOPEN" "SYSLIBS=" "SYSLDFLAGS=-s" lua.exe'
+            >> "src/Makefile" echo -ne "\t"
+            >> "src/Makefile" echo '$(MAKE) "LUAC_T=luac.exe" luac.exe'
+
+            make -C src "$LOCALUA_TARGET" || exit 1
+            make \
+                TO_BIN="lua.exe luac.exe lua53.dll" \
+                TO_LIB="liblua.a liblua.dll.a" \
+                INSTALL_TOP="$ODIR" install || exit 1
+        else
+            make "$LOCALUA_TARGET" || exit 1
+            make INSTALL_TOP="$ODIR" install || exit 1
+        fi
+
     popd
     if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
         wget "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz"
