@@ -6,6 +6,9 @@ LuaRocks on Linux, macOS and MSYS2.
 It supports Lua 5.1 to 5.3. It does *not* officially support other operating
 systems or environments, and it does *not* support LuaJIT.
 
+Support for Lua 5.4 is experimental. You can use 5.4 by explicitly
+specifying the version but 5.3 is the default as of now.
+
 If this does not fit your needs, check out:
 
 - [hererocks](https://github.com/mpeterv/hererocks), in Python
@@ -15,4 +18,4 @@ Run the script without arguments to see how to use it.
 
 ## Copyright
 
-- Copyright (c) 2015-2019 Pierre Chapuis
+- Copyright (c) 2015-2020 Pierre Chapuis
