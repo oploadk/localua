@@ -31,6 +31,7 @@ LUA_V="$2"
 [ -z "$LUA_V" ] && LUA_V="$DEFAULT_LUA_V"
 
 LUA_SHORTV="$(echo $LUA_V | cut -c 1-3)"
+LUA_SHORTV2="$(echo $LUA_SHORTV | cut -d '.')"
 
 LR_V="$3"
 [ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
@@ -77,7 +78,7 @@ pushd "$BDIR"
             >> "src/Makefile" echo
             >> "src/Makefile" echo 'msys:' >> "src/Makefile"
             >> "src/Makefile" echo -ne "\t"
-            >> "src/Makefile" echo '$(MAKE) "LUA_A=lua53.dll" "LUA_T=lua.exe" \'
+            >> "src/Makefile" echo '$(MAKE) "LUA_A=lua'"$LUA_SHORTV2"'.dll" "LUA_T=lua.exe" \'
             >> "src/Makefile" echo -ne "\t"
             >> "src/Makefile" echo '"AR=$(CC) -shared -Wl,--out-implib,liblua.dll.a -o" "RANLIB=strip --strip-unneeded" \'
             >> "src/Makefile" echo -ne "\t"
@@ -87,7 +88,7 @@ pushd "$BDIR"
 
             make -C src "$LOCALUA_TARGET" || exit 1
             make \
-                TO_BIN="lua.exe luac.exe lua53.dll" \
+                TO_BIN="lua.exe luac.exe lua${LUA_SHORTV2}.dll" \
                 TO_LIB="liblua.a liblua.dll.a" \
                 INSTALL_TOP="$ODIR" install || exit 1
         else
