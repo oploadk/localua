@@ -31,7 +31,7 @@ LUA_V="$2"
 [ -z "$LUA_V" ] && LUA_V="$DEFAULT_LUA_V"
 
 LUA_SHORTV="$(echo $LUA_V | cut -c 1-3)"
-LUA_SHORTV2="$(echo $LUA_SHORTV | cut -d '.')"
+LUA_SHORTV2="$(echo $LUA_SHORTV | tr -d '.')"
 
 LR_V="$3"
 [ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
@@ -70,7 +70,7 @@ pushd "$BDIR"
         sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
         mv "$BDIR/t" "src/luaconf.h"
         if [ ! -z "$LOCALUA_NO_COMPAT" ]; then
-            sed 's#-DLUA_COMPAT_5_2##' "src/Makefile" > "$BDIR/t"
+            sed 's#-DLUA_COMPAT_5_.##' "src/Makefile" > "$BDIR/t"
             sed 's#-DLUA_COMPAT_ALL##' "$BDIR/t" > "src/Makefile"
         fi
 
