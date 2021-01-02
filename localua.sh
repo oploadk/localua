@@ -6,8 +6,8 @@
 # Latest stable version available at: https://loadk.com/localua.sh
 # Maintained at: https://github.com/oploadk/localua
 
-DEFAULT_LUA_V="5.3.5"
-DEFAULT_LR_V="3.3.1"
+DEFAULT_LUA_V="5.3.6"
+DEFAULT_LR_V="3.5.0"
 
 usage () {
     >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
