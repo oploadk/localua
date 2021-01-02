@@ -3,11 +3,8 @@
 localua.sh is a Bash script to download and install a self-contained Lua and
 LuaRocks on Linux, macOS and MSYS2.
 
-It supports Lua 5.1 to 5.3. It does *not* officially support other operating
+It supports Lua 5.1 to 5.4. It does *not* officially support other operating
 systems or environments, and it does *not* support LuaJIT.
-
-Support for Lua 5.4 is experimental. You can use 5.4 by explicitly
-specifying the version but 5.3 is the default as of now.
 
 If this does not fit your needs, check out:
 
