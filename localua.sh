@@ -64,7 +64,7 @@ if [ -z "$LOCALUA_TARGET" ]; then
 fi
 
 pushd "$BDIR"
-    wget "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz"
+    curl "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
     tar xf "lua-${LUA_V}.tar.gz"
     pushd "lua-${LUA_V}"
         sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
@@ -98,7 +98,7 @@ pushd "$BDIR"
 
     popd
     if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
-        wget "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz"
+        curl "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz" -O
         tar xf "luarocks-${LR_V}.tar.gz"
         pushd "luarocks-${LR_V}"
             ./configure --with-lua="$ODIR" --prefix="$ODIR" \
