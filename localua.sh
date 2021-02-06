@@ -98,7 +98,7 @@ pushd "$BDIR"
 
     popd
     if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
-        curl "http://luarocks.org/releases/luarocks-${LR_V}.tar.gz" -O
+        curl -L "https://luarocks.org/releases/luarocks-${LR_V}.tar.gz" -O
         tar xf "luarocks-${LR_V}.tar.gz"
         pushd "luarocks-${LR_V}"
             ./configure --with-lua="$ODIR" --prefix="$ODIR" \
