@@ -15,4 +15,4 @@ Run the script without arguments to see how to use it.
 
 ## Copyright
 
-- Copyright (c) 2015-2021 Pierre Chapuis
+- Copyright (c) 2015-2022 Pierre Chapuis
