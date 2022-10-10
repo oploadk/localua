@@ -31,10 +31,17 @@ LUA_V="$2"
 [ -z "$LUA_V" ] && LUA_V="$DEFAULT_LUA_V"
 
 LUA_SHORTV="$(echo $LUA_V | cut -c 1-3)"
+LUA_SRCDIR="lua-${LUA_V}"
+if [ "$LUA_V" = "pallene" ]; then
+    LUA_SHORTV="5.4"
+    LUA_SRCDIR="lua-internals"
+fi
 LUA_SHORTV2="$(echo $LUA_SHORTV | tr -d '.')"
 
 LR_V="$3"
 [ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
+
+PALLENE_ROCKSPEC="https://raw.githubusercontent.com/pallene-lang/pallene/master/pallene-dev-1.rockspec"
 
 # Set build directory
 
@@ -63,10 +70,18 @@ if [ -z "$LOCALUA_TARGET" ]; then
     esac
 fi
 
+download_lua () {
+    if [ "$LUA_V" = "pallene" ]; then
+        git clone --depth 1 "git@github.com:pallene-lang/lua-internals.git"
+    else
+        curl "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
+        tar xf "lua-${LUA_V}.tar.gz"
+    fi
+}
+
 pushd "$BDIR"
-    curl "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
-    tar xf "lua-${LUA_V}.tar.gz"
-    pushd "lua-${LUA_V}"
+    download_lua
+    pushd "$LUA_SRCDIR"
         sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
         mv "$BDIR/t" "src/luaconf.h"
         if [ ! -z "$LOCALUA_NO_COMPAT" ]; then
@@ -95,7 +110,6 @@ pushd "$BDIR"
             make "$LOCALUA_TARGET" || exit 1
             make INSTALL_TOP="$ODIR" install || exit 1
         fi
-
     popd
     if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
         curl -L "https://luarocks.org/releases/luarocks-${LR_V}.tar.gz" -O
@@ -106,6 +120,9 @@ pushd "$BDIR"
                         --sysconfdir="$ODIR/luarocks" --force-config
             make bootstrap
         popd
+        if [ "$LUA_V" = "pallene" ]; then
+            "$ODIR/bin/luarocks" install "$PALLENE_ROCKSPEC"
+        fi
     fi
 popd
 
