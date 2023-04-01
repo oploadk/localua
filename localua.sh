@@ -79,6 +79,42 @@ download_lua () {
     fi
 }
 
+cleanup_luarocks_isolation () {
+    # See:
+    # https://github.com/oploadk/localua/issues/3
+    # https://github.com/oploadk/localua/issues/4
+
+    echo "Cleaning up luarocks isolation..."
+
+    >/dev/null pushd "$ODIR"
+        # We must *not* be in the build directory, otherwise
+        # it will take its config instead.
+
+        rocks_dir="$("$ODIR/bin/luarocks" config rocks_dir)"
+        lr_version="$("$ODIR/bin/luarocks" show luarocks --mversion)"
+        lr_bin="$rocks_dir/luarocks/$lr_version/bin/luarocks"
+        lr_config_file=$("$ODIR/bin/luarocks" config config_files.system.file)
+
+        if [ ! -x "$lr_bin" ]; then
+            >&2 echo -n "Could not cleanup luarocks isolation, "
+            >&2 echo "executable $lr_bin not found."
+            return 1
+        fi
+
+        if [ ! -f "$lr_config_file" ]; then
+            >&2 echo -n "Could not cleanup luarocks isolation, "
+            >&2 echo "config file $lr_config_file not found."
+            return 1
+        fi
+
+        # Remove user tree from configuration file.
+        sed -i "$lr_config_file" -e '/name = "user"/d'
+    >/dev/null popd
+
+    # Rebuild with the *local* Lua to avoid trash in wrapper scripts.
+    "$ODIR/bin/lua" "$lr_bin" make --tree="$ODIR"
+}
+
 pushd "$BDIR"
     download_lua
     pushd "$LUA_SRCDIR"
@@ -117,8 +153,11 @@ pushd "$BDIR"
         pushd "luarocks-${LR_V}"
             ./configure --with-lua="$ODIR" --prefix="$ODIR" \
                         --lua-version="$LUA_SHORTV" \
-                        --sysconfdir="$ODIR/luarocks" --force-config
+                        --sysconfdir="$ODIR/etc" --force-config
             make bootstrap
+            if [ -z "$LOCALUA_NO_LUAROCKS_ISOLATION_CLEANUP" ]; then
+                cleanup_luarocks_isolation
+            fi
         popd
         if [ "$LUA_V" = "pallene" ]; then
             "$ODIR/bin/luarocks" install "$PALLENE_ROCKSPEC"
