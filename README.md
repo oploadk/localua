@@ -13,6 +13,10 @@ If this does not fit your needs, check out:
 
 Run the script without arguments to see how to use it.
 
+## MSYS2 dependencies
+
+Before running the script, install `base-devel`, `gcc` and `unzip`.
+
 ## Copyright
 
 - Copyright (c) 2015-2022 Pierre Chapuis
