@@ -108,7 +108,8 @@ cleanup_luarocks_isolation () {
         fi
 
         # Remove user tree from configuration file.
-        sed -i "$lr_config_file" -e '/name = "user"/d'
+        sed -e '/name = "user"/d' "$lr_config_file" > "$BDIR/t"
+        mv "$BDIR/t" "$lr_config_file"
     >/dev/null popd
 
     # Rebuild with the *local* Lua to avoid trash in wrapper scripts.
