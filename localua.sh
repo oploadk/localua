@@ -2,7 +2,7 @@
 
 # Downloads and installs a self-contained Lua and LuaRocks.
 # Supports Linux, macOS and MSYS2.
-# Copyright (c) 2015-2022 Pierre Chapuis, MIT Licensed.
+# Copyright (c) 2015-2023 Pierre Chapuis, MIT Licensed.
 # Latest stable version available at: https://loadk.com/localua.sh
 # Maintained at: https://github.com/oploadk/localua
 
