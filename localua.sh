@@ -6,7 +6,7 @@
 # Latest stable version available at: https://loadk.com/localua.sh
 # Maintained at: https://github.com/oploadk/localua
 
-DEFAULT_LUA_V="5.4.5"
+DEFAULT_LUA_V="5.4.4"
 DEFAULT_LR_V="3.9.2"
 
 usage () {
