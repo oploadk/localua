@@ -7,7 +7,7 @@
 # Maintained at: https://github.com/oploadk/localua
 
 DEFAULT_LUA_V="5.4.6"
-DEFAULT_LR_V="3.9.2"
+DEFAULT_LR_V="3.10.0"
 
 usage () {
     >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
