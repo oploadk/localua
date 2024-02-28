@@ -74,7 +74,7 @@ download_lua () {
     if [ "$LUA_V" = "pallene" ]; then
         git clone --depth 1 "git@github.com:pallene-lang/lua-internals.git"
     else
-        curl "http://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
+        curl "https://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
         tar xf "lua-${LUA_V}.tar.gz"
     fi
 }
