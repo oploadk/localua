@@ -33,4 +33,4 @@ Similar tools for other languages:
 
 ## Copyright
 
-- Copyright (c) 2015-2023 Pierre Chapuis
+- Copyright (c) Pierre Chapuis

@@ -2,12 +2,12 @@
 
 # Downloads and installs a self-contained Lua and LuaRocks.
 # Supports Linux, macOS and MSYS2.
-# Copyright (c) 2015-2023 Pierre Chapuis, MIT Licensed.
+# Copyright (c) Pierre Chapuis, MIT Licensed.
 # Latest stable version available at: https://loadk.com/localua.sh
 # Maintained at: https://github.com/oploadk/localua
 
 DEFAULT_LUA_V="5.4.6"
-DEFAULT_LR_V="3.10.0"
+DEFAULT_LR_V="3.11.0"
 
 usage () {
     >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
