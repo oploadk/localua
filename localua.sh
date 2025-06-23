@@ -116,6 +116,16 @@ cleanup_luarocks_isolation () {
     "$ODIR/bin/lua" "$lr_bin" make --tree="$ODIR"
 }
 
+install_ptracer () {
+    echo "Installing Pallene Tracer..."
+    pushd "$BDIR"
+        git clone https://www.github.com/pallene-lang/pallene-tracer --depth 1 --branch 0.5.0a
+        pushd pallene-tracer
+            make PREFIX="$ODIR" LUA_PREFIX="$ODIR" install
+        popd
+    popd
+}
+
 pushd "$BDIR"
     download_lua
     pushd "$LUA_SRCDIR"
@@ -161,7 +171,8 @@ pushd "$BDIR"
             fi
         popd
         if [ "$LUA_V" = "pallene" ]; then
-            "$ODIR/bin/luarocks" install "$PALLENE_ROCKSPEC"
+            install_ptracer
+            "$ODIR/bin/luarocks" install "$PALLENE_ROCKSPEC" PTRACER_DIR="$ODIR"
         fi
     fi
 popd
