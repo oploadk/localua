@@ -164,8 +164,9 @@ pushd "$BDIR"
         pushd "luarocks-${LR_V}"
             ./configure --with-lua="$ODIR" --prefix="$ODIR" \
                         --lua-version="$LUA_SHORTV" \
-                        --sysconfdir="$ODIR/etc" --force-config
-            make bootstrap
+                        --sysconfdir="$ODIR/etc" --force-config \
+            || exit 1
+            make bootstrap || exit 1
             if [ -z "$LOCALUA_NO_LUAROCKS_ISOLATION_CLEANUP" ]; then
                 cleanup_luarocks_isolation
             fi
