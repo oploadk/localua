@@ -35,7 +35,10 @@ LUA_SRCDIR="lua-${LUA_V}"
 if [ "$LUA_V" = "pallene" ]; then
     LUA_SHORTV="5.4"
     LUA_SRCDIR="lua-internals"
+elif [[ "$LUA_V" == *-rc* ]]; then
+    LUA_SRCDIR="lua-$(echo $LUA_V | cut -d- -f1)"
 fi
+
 LUA_SHORTV2="$(echo $LUA_SHORTV | tr -d '.')"
 
 LR_V="$3"
@@ -74,7 +77,11 @@ download_lua () {
     if [ "$LUA_V" = "pallene" ]; then
         git clone --depth 1 "git@github.com:pallene-lang/lua-internals.git"
     else
-        curl "https://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
+        if [[ "$LUA_V" == *-rc* ]]; then
+            curl "https://www.lua.org/work/lua-${LUA_V}.tar.gz" -O
+        else
+            curl "https://www.lua.org/ftp/lua-${LUA_V}.tar.gz" -O
+        fi
         tar xf "lua-${LUA_V}.tar.gz"
     fi
 }
