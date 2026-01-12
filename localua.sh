@@ -146,18 +146,21 @@ pushd "$BDIR"
         fi
 
         if [ "$LOCALUA_TARGET" = "msys" ]; then
-            >> "src/Makefile" echo
-            >> "src/Makefile" echo 'msys:'
-            >> "src/Makefile" echo -ne "\t"
-            >> "src/Makefile" echo '$(MAKE) "LUA_A=lua'"$LUA_SHORTV2"'.dll" "LUA_T=lua.exe" \'
-            >> "src/Makefile" echo -ne "\t"
-            >> "src/Makefile" echo '"AR=$(CC) -shared -Wl,--out-implib,liblua.dll.a -o" "RANLIB=strip --strip-unneeded" \'
-            >> "src/Makefile" echo -ne "\t"
-            >> "src/Makefile" echo '"SYSCFLAGS=-DLUA_BUILD_AS_DLL -DLUA_USE_POSIX -DLUA_USE_DLOPEN" "SYSLIBS=" "SYSLDFLAGS=-s" lua.exe'
-            >> "src/Makefile" echo -ne "\t"
-            >> "src/Makefile" echo '$(MAKE) "LUAC_T=luac.exe" luac.exe'
+            # shellcheck disable=SC2016,SC1003
+            {
+                echo
+                echo 'msys:'
+                echo -ne "\t"
+                echo '$(MAKE) "LUA_A=lua'"$LUA_SHORTV2"'.dll" "LUA_T=lua.exe" \'
+                echo -ne "\t"
+                echo '"AR=$(CC) -shared -Wl,--out-implib,liblua.dll.a -o" "RANLIB=strip --strip-unneeded" \'
+                echo -ne "\t"
+                echo '"SYSCFLAGS=-DLUA_BUILD_AS_DLL -DLUA_USE_POSIX -DLUA_USE_DLOPEN" "SYSLIBS=" "SYSLDFLAGS=-s" lua.exe'
+                echo -ne "\t"
+                echo '$(MAKE) "LUAC_T=luac.exe" luac.exe'
+            } >> "src/Makefile"
 
-            make -C src "$LOCALUA_TARGET" || exit 1
+            make -C src "$LOCALUA_TARGET"
             make \
                 TO_BIN="lua.exe luac.exe lua${LUA_SHORTV2}.dll" \
                 TO_LIB="liblua.a liblua.dll.a" \
