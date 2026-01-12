@@ -9,6 +9,8 @@
 DEFAULT_LUA_V="5.4.8"
 DEFAULT_LR_V="3.12.2"
 
+set -e
+
 usage () {
     >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
     >&2 echo -n "The first optional argument is the Lua version, "
@@ -30,16 +32,16 @@ ODIR="$1"
 LUA_V="$2"
 [ -z "$LUA_V" ] && LUA_V="$DEFAULT_LUA_V"
 
-LUA_SHORTV="$(echo $LUA_V | cut -c 1-3)"
+LUA_SHORTV="$(echo "$LUA_V" | cut -c 1-3)"
 LUA_SRCDIR="lua-${LUA_V}"
 if [ "$LUA_V" = "pallene" ]; then
     LUA_SHORTV="5.4"
     LUA_SRCDIR="lua-internals"
 elif [[ "$LUA_V" == *-rc* ]]; then
-    LUA_SRCDIR="lua-$(echo $LUA_V | cut -d- -f1)"
+    LUA_SRCDIR="lua-$(echo "$LUA_V" | cut -d- -f1)"
 fi
 
-LUA_SHORTV2="$(echo $LUA_SHORTV | tr -d '.')"
+LUA_SHORTV2="$(echo "$LUA_SHORTV" | tr -d '.')"
 
 LR_V="$3"
 [ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
@@ -138,14 +140,14 @@ pushd "$BDIR"
     pushd "$LUA_SRCDIR"
         sed 's#"/usr/local/"#"'"$ODIR"'/"#' "src/luaconf.h" > "$BDIR/t"
         mv "$BDIR/t" "src/luaconf.h"
-        if [ ! -z "$LOCALUA_NO_COMPAT" ]; then
+        if [ -n "$LOCALUA_NO_COMPAT" ]; then
             sed 's#-DLUA_COMPAT_5_.##' "src/Makefile" > "$BDIR/t"
             sed 's#-DLUA_COMPAT_ALL##' "$BDIR/t" > "src/Makefile"
         fi
 
         if [ "$LOCALUA_TARGET" = "msys" ]; then
             >> "src/Makefile" echo
-            >> "src/Makefile" echo 'msys:' >> "src/Makefile"
+            >> "src/Makefile" echo 'msys:'
             >> "src/Makefile" echo -ne "\t"
             >> "src/Makefile" echo '$(MAKE) "LUA_A=lua'"$LUA_SHORTV2"'.dll" "LUA_T=lua.exe" \'
             >> "src/Makefile" echo -ne "\t"
