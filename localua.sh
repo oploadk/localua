@@ -12,25 +12,73 @@ DEFAULT_LR_V="3.12.2"
 set -e
 
 usage () {
-    >&2 echo -e "USAGE: $0 output-dir [lua-version] [luarocks-version]\n"
-    >&2 echo -n "The first optional argument is the Lua version, "
-    >&2 echo -n "the second one is the LuaRocks version. "
-    >&2 echo -e "Defaults are Lua $DEFAULT_LUA_V and LuaRocks $DEFAULT_LR_V.\n"
-    >&2 echo -n "You can set a custom build directory with environment "
-    >&2 echo -e "variable LOCALUA_BUILD_DIRECTORY (not useful in general).\n"
-    >&2 echo -e "You can set a custom makefile target with LOCALUA_TARGET.\n"
-    >&2 echo -e "You can disable LUA_COMPAT by setting LOCALUA_NO_COMPAT.\n"
-    >&2 echo -e "You can skip luarocks by setting LOCALUA_NO_LUAROCKS."
+    {
+        echo -e "USAGE: $0 [options] output-dir\n"
+        echo -e "Options:"
+        echo -e "  --lua VERSION       Lua version (default: $DEFAULT_LUA_V)"
+        echo -e "  --luarocks VERSION  LuaRocks version (default: $DEFAULT_LR_V)"
+        echo -e "  --no-compat         Disable LUA_COMPAT"
+        echo -e "  --no-luarocks       Skip LuaRocks installation"
+        echo -e "  --target TARGET     Makefile target (linux, macosx, msys, posix)"
+        echo -e "  --build-dir DIR     Custom build directory"
+    } >&2
     exit 1
 }
 
-# Set output directory, Lua version and LuaRocks version
+LUA_V=""
+LR_V=""
+POSITIONAL=()
 
-ODIR="$1"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --lua)
+            LUA_V="$2"
+            shift 2
+            ;;
+        --luarocks)
+            LR_V="$2"
+            shift 2
+            ;;
+        --no-compat)
+            LOCALUA_NO_COMPAT=1
+            shift
+            ;;
+        --no-luarocks)
+            LOCALUA_NO_LUAROCKS=1
+            shift
+            ;;
+        --target)
+            LOCALUA_TARGET="$2"
+            shift 2
+            ;;
+        --build-dir)
+            LOCALUA_BUILD_DIRECTORY="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            ;;
+        -*)
+            >&2 echo "Unknown option: $1"
+            usage
+            ;;
+        *)
+            POSITIONAL+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# Handle positional arguments for backward compatibility:
+# output-dir [lua-version] [luarocks-version]
+ODIR="${POSITIONAL[0]}"
 [ -z "$ODIR" ] && usage
 
-LUA_V="$2"
+[ -z "$LUA_V" ] && LUA_V="${POSITIONAL[1]}"
 [ -z "$LUA_V" ] && LUA_V="$DEFAULT_LUA_V"
+
+[ -z "$LR_V" ] && LR_V="${POSITIONAL[2]}"
+[ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
 
 LUA_SHORTV="$(echo "$LUA_V" | cut -c 1-3)"
 LUA_SRCDIR="lua-${LUA_V}"
@@ -42,9 +90,6 @@ elif [[ "$LUA_V" == *-rc* ]]; then
 fi
 
 LUA_SHORTV2="$(echo "$LUA_SHORTV" | tr -d '.')"
-
-LR_V="$3"
-[ -z "$LR_V" ] && LR_V="$DEFAULT_LR_V"
 
 PALLENE_ROCKSPEC="https://raw.githubusercontent.com/pallene-lang/pallene/master/pallene-dev-1.rockspec"
 
