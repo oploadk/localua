@@ -161,10 +161,10 @@ pushd "$BDIR"
             make \
                 TO_BIN="lua.exe luac.exe lua${LUA_SHORTV2}.dll" \
                 TO_LIB="liblua.a liblua.dll.a" \
-                INSTALL_TOP="$ODIR" install || exit 1
+                INSTALL_TOP="$ODIR" install
         else
-            make "$LOCALUA_TARGET" || exit 1
-            make INSTALL_TOP="$ODIR" install || exit 1
+            make "$LOCALUA_TARGET"
+            make INSTALL_TOP="$ODIR" install
         fi
     popd
     if [ -z "$LOCALUA_NO_LUAROCKS" ]; then
@@ -173,9 +173,8 @@ pushd "$BDIR"
         pushd "luarocks-${LR_V}"
             ./configure --with-lua="$ODIR" --prefix="$ODIR" \
                         --lua-version="$LUA_SHORTV" \
-                        --sysconfdir="$ODIR/etc" --force-config \
-            || exit 1
-            make bootstrap || exit 1
+                        --sysconfdir="$ODIR/etc" --force-config
+            make bootstrap
             if [ -z "$LOCALUA_NO_LUAROCKS_ISOLATION_CLEANUP" ]; then
                 cleanup_luarocks_isolation
             fi
